@@ -7,15 +7,36 @@
 [node name="Test" type="Node2D"]
 
 [node name="Tree" parent="." instance=ExtResource( 1 )]
-position = Vector2( 0, 100 )
+position = Vector2( 0, 102 )
 scale = Vector2( 1, 0.68 )
 
-[node name="Luce" parent="." instance=ExtResource( 2 )]
-position = Vector2( -10, -21 )
+[node name="Tree2" parent="." instance=ExtResource( 1 )]
+position = Vector2( 630, 101 )
+scale = Vector2( 1, 0.68 )
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Tree3" parent="." instance=ExtResource( 1 )]
+position = Vector2( 1022, -14 )
+scale = Vector2( 1, 1.4 )
+
+[node name="Luce" parent="." instance=ExtResource( 2 )]
+position = Vector2( -511, 161 )
+
+[node name="Camera2D" type="Camera2D" parent="Luce"]
+position = Vector2( 0, -130 )
 current = true
 
 [node name="Ground" parent="." instance=ExtResource( 3 )]
-position = Vector2( 1, 255 )
-scale = Vector2( 1.00821, 0.713098 )
+position = Vector2( -7, 270 )
+scale = Vector2( 1.02215, 0.984958 )
+
+[node name="Ground2" parent="." instance=ExtResource( 3 )]
+position = Vector2( 1031, 270 )
+scale = Vector2( 1.02215, 0.984958 )
+
+[node name="Ground3" parent="." instance=ExtResource( 3 )]
+position = Vector2( -1053, 270 )
+scale = Vector2( 1.02215, 0.984958 )
+
+[node name="Ground4" parent="." instance=ExtResource( 3 )]
+position = Vector2( 2067, 270 )
+scale = Vector2( 1.02215, 0.984958 )

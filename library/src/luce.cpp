@@ -9,9 +9,9 @@ void Luce::_register_methods() {
     register_method("_physics_process", &Luce::_physics_process);
 
     // Register properties here
-    register_property<Luce, float>("jump", &Luce::jump, 300.0);
-    register_property<Luce, float>("gravity", &Luce::gravity, 200.0);
-    register_property<Luce, float>("speed", &Luce::speed, 100.0);
+    // register_property<Luce, float>("jump", &Luce::jump, 300.0);
+    // register_property<Luce, float>("gravity", &Luce::gravity, 200.0);
+    // register_property<Luce, float>("speed", &Luce::speed, 100.0);
 }
 
 Luce::Luce() {
@@ -25,9 +25,9 @@ Luce::~Luce() {
 void Luce::_init() {
     jumped = false;
     velocity = Vector2(0, 0);
-    jump = 300.0;
-    gravity = 200.0;
-    speed = 100.0;
+    jump = 500.0;
+    gravity = 600.0;
+    speed = 200.0;
     was_going_left = false;
 }
 

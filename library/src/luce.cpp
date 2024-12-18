@@ -7,11 +7,6 @@ using namespace godot;
 void Luce::_register_methods() {
     // Register _process function here
     register_method("_physics_process", &Luce::_physics_process);
-
-    // Register properties here
-    // register_property<Luce, float>("jump", &Luce::jump, 300.0);
-    // register_property<Luce, float>("gravity", &Luce::gravity, 200.0);
-    // register_property<Luce, float>("speed", &Luce::speed, 100.0);
 }
 
 Luce::Luce() {

@@ -1,6 +1,4 @@
-CC := em++
 CXX := emcc
-CPPFLAGS := 
 CXX_FLAGS := -sSIDE_MODULE=1
 OPT_DEBUG := -O0
 OPT_RELEASE := -O3

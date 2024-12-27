@@ -7,7 +7,7 @@
 
 namespace godot {
     class DemonState;
-    
+
     class Demon : public KinematicBody2D {
         GODOT_CLASS(Demon, KinematicBody2D);
 
@@ -29,8 +29,8 @@ namespace godot {
     class DemonState {
         public:
             DemonState();
-            ~DemonState();
-            DemonState* update(godot::Demon& demon);
+            virtual ~DemonState();
+            virtual DemonState* update(godot::Demon& demon);
     };
 
     class DemonStill : public DemonState {

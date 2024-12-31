@@ -8,7 +8,7 @@
 [node name="Test" type="Node2D"]
 
 [node name="Tree" parent="." instance=ExtResource( 1 )]
-position = Vector2( 0, 102 )
+position = Vector2( 1378, 99 )
 scale = Vector2( 1, 0.68 )
 
 [node name="Tree2" parent="." instance=ExtResource( 1 )]
@@ -43,4 +43,4 @@ position = Vector2( 2067, 270 )
 scale = Vector2( 1.02215, 0.984958 )
 
 [node name="Demon" parent="." instance=ExtResource( 4 )]
-position = Vector2( 0, -2 )
+position = Vector2( -2, 178 )

@@ -18,11 +18,17 @@ namespace godot {
             DemonState* state;
 
         public:
+            bool chase;
+            bool evade;
+
             Demon();
             ~Demon();
             static void _register_methods();
             void _init();
+            void _ready();
             void _physics_process(float delta);
+            void _body_entered(Variant body);
+            void _body_exited(Variant body);
             void set_velocity(Vector2 v);
     };
 
@@ -37,6 +43,13 @@ namespace godot {
         public:
             DemonStill();
             ~DemonStill();
+            DemonState* update(godot::Demon& demon);
+    };
+
+    class DemonChase : public DemonState {
+        public:
+            DemonChase();
+            ~DemonChase();
             DemonState* update(godot::Demon& demon);
     };
 }

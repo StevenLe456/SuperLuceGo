@@ -1,6 +1,7 @@
 #ifndef LUCE_H
 #define LUCE_H
 
+#include <AnimatedSprite.hpp>
 #include <Godot.hpp>
 #include <Input.hpp>
 #include <KinematicBody2D.hpp>
@@ -11,6 +12,7 @@ namespace godot {
         GODOT_CLASS(Luce, KinematicBody2D);
 
         private:
+            AnimatedSprite* anim;
             Input* input;
             bool jumped;
             Vector2 velocity;
@@ -24,6 +26,7 @@ namespace godot {
             ~Luce();
             static void _register_methods();
             void _init();
+            void _ready();
             void _physics_process(float delta);
     };
 }

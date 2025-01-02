@@ -1,7 +1,6 @@
 #include "demon.hpp"
 
-#include "Area2D.hpp"
-
+#include <cmath>
 #include <iostream>
 
 using namespace godot;
@@ -28,6 +27,7 @@ DemonStill::~DemonStill() {
 
 DemonState* DemonStill::update(godot::Demon& demon) {
     demon.set_velocity(godot::Vector2(0, 0));
+    demon.animation = "still";
     if (demon.chase) {
         return new DemonChase();
     }
@@ -42,7 +42,19 @@ DemonChase::~DemonChase() {
 
 }
 
-DemonState* DemonChase::update(Demon& Demon) {
+DemonState* DemonChase::update(Demon& demon) {
+    KinematicBody2D* luce = demon.get_parent()->get_parent()->get_node<KinematicBody2D>("Luce");
+    float distance = demon.get_position().x - luce->get_position().x;
+    if (distance > 0.0) {
+        demon.set_velocity(Vector2(-250.0, 0));
+    }
+    else {
+        demon.set_velocity(Vector2(demon.get_speed(), 0));
+    }
+    demon.animation = "move";
+    if (!demon.chase) {
+        return new DemonStill();
+    }
     return NULL;
 }
 
@@ -50,12 +62,9 @@ void Demon::_register_methods() {
     // Register _process function here
     register_method("_ready", &Demon::_ready);
     register_method("_physics_process", &Demon::_physics_process);
-    register_method("_body_entered", &Demon::_body_entered);
-    register_method("_body_exited", &Demon::_body_exited);
 }
 
 Demon::Demon() {
-    chase = false;
     state = new DemonStill();
 }
 
@@ -64,37 +73,32 @@ Demon::~Demon() {
 }
 
 void Demon::_init() {
-
+    speed = 150.0;
+    chase = false;
 }
 
 void Demon::_ready() {
-    Area2D* box = get_node<Area2D>("Area2D");
-    box->connect("body_entered", this, "_body_entered");
-    box->connect("body_exited", this, "_body_exited");
+    anim = get_node<AnimatedSprite>("AnimatedSprite");
+    luce = get_parent()->get_parent()->get_node<KinematicBody2D>("Luce");
 }
 
 void Demon::_physics_process(float delta) {
+    // Might also have to check if y-distance between demon and Luce is zero...
+    float distance = std::abs(luce->get_position().x - get_position().x);
+    chase = distance <= 500.0;
     DemonState* s = state->update(*this);
+    move_and_slide(velocity, Vector2::UP);
+    anim->play(animation);
     if (s != NULL) {
         delete state;
         state = s;
     }
 }
 
-void Demon::_body_entered(Variant body) {
-    Node* n = (Node*) body;
-    if (n->get_name() == "Luce") {
-        chase = true;
-    }
-}
-
-void Demon::_body_exited(Variant body) {
-    Node* n = (Node*) body;
-    if (n->get_name() == "Luce") {
-        chase = false;
-    }
-}
-
 void Demon::set_velocity(Vector2 v) {
     velocity = v;
+}
+
+float Demon::get_speed() {
+    return speed;
 }

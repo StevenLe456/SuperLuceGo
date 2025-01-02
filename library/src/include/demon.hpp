@@ -1,6 +1,7 @@
 #ifndef DEMON_H
 #define DEMON_H
 
+#include <AnimatedSprite.hpp>
 #include <Godot.hpp>
 #include <KinematicBody2D.hpp>
 #include <Vector2.hpp>
@@ -16,10 +17,13 @@ namespace godot {
             float gravity;
             float speed;
             DemonState* state;
+            AnimatedSprite* anim;
+            KinematicBody2D* luce;
 
         public:
             bool chase;
             bool evade;
+            godot::String animation;
 
             Demon();
             ~Demon();
@@ -30,6 +34,7 @@ namespace godot {
             void _body_entered(Variant body);
             void _body_exited(Variant body);
             void set_velocity(Vector2 v);
+            float get_speed();
     };
 
     class DemonState {

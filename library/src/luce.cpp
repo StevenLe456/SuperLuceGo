@@ -1,11 +1,10 @@
-#include "AnimatedSprite.hpp"
-
 #include "luce.hpp"
 
 using namespace godot;
 
 void Luce::_register_methods() {
     // Register _process function here
+    register_method("_ready", &Luce::_ready);
     register_method("_physics_process", &Luce::_physics_process);
 }
 
@@ -24,6 +23,10 @@ void Luce::_init() {
     gravity = 600.0;
     speed = 200.0;
     was_going_left = false;
+}
+
+void Luce::_ready() {
+    anim = get_node<AnimatedSprite>("AnimatedSprite");
 }
 
 void Luce::_physics_process(float delta) {
@@ -56,27 +59,27 @@ void Luce::_physics_process(float delta) {
     // Aimation logic
     if (is_on_floor()) {
         if (velocity.x > 0) {
-            get_node<AnimatedSprite>("AnimatedSprite")->set_flip_h(false);
-            get_node<AnimatedSprite>("AnimatedSprite")->play("walk");
+            anim->set_flip_h(false);
+            anim->play("walk");
             was_going_left = false;
         }
         else if (velocity.x < 0) {
-            get_node<AnimatedSprite>("AnimatedSprite")->set_flip_h(true);
-            get_node<AnimatedSprite>("AnimatedSprite")->play("walk");
+            anim->set_flip_h(true);
+            anim->play("walk");
             was_going_left = true;
         }
         else {
-            get_node<AnimatedSprite>("AnimatedSprite")->play("stand");
+            anim->play("stand");
         }
     }
     else if (!is_on_floor()) {
         if ((velocity.y != 0 && velocity.x < 0) || (velocity.y != 0 && velocity.x == 0 && was_going_left)) {
-            get_node<AnimatedSprite>("AnimatedSprite")->set_flip_h(true);
-            get_node<AnimatedSprite>("AnimatedSprite")->play("jump");
+            anim->set_flip_h(true);
+            anim->play("jump");
         }
         else if (velocity.y != 0 && velocity.x >= 0) {
-            get_node<AnimatedSprite>("AnimatedSprite")->set_flip_h(false);
-            get_node<AnimatedSprite>("AnimatedSprite")->play("jump");
+            anim->set_flip_h(false);
+            anim->play("jump");
         }
         else {
             // Empty

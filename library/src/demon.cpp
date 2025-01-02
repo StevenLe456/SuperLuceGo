@@ -91,6 +91,18 @@ DemonState* DemonEvade::update(Demon& demon) {
     return NULL;
 }
 
+DemonDie::DemonDie() {
+
+}
+
+DemonDie::~DemonDie() {
+
+}
+
+DemonState* DemonDie::update(Demon& demon) {
+    return NULL;
+}
+
 void Demon::_register_methods() {
     // Register _process function here
     register_method("_ready", &Demon::_ready);

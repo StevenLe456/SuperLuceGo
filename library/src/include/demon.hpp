@@ -66,6 +66,13 @@ namespace godot {
             ~DemonEvade();
             DemonState* update(godot::Demon& demon);
     };
+
+    class DemonDie : public DemonState {
+        public:
+            DemonDie();
+            ~DemonDie();
+            DemonState* update(godot::Demon& demon);
+    };
 }
 
 #endif

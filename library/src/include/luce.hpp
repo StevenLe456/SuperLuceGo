@@ -14,9 +14,10 @@ namespace godot {
         private:
             AnimatedSprite* anim;
             Input* input;
-            bool jumped;
             Vector2 velocity;
+            bool jumped;
             bool was_going_left;
+            bool rosary_power;
             float jump;
             float gravity;
             float speed;
@@ -28,6 +29,7 @@ namespace godot {
             void _init();
             void _ready();
             void _physics_process(float delta);
+            bool get_rosary_power();
     };
 }
 

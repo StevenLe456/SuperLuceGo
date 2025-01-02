@@ -17,8 +17,9 @@ Luce::~Luce() {
 }
 
 void Luce::_init() {
-    jumped = false;
     velocity = Vector2(0, 0);
+    jumped = false;
+    rosary_power = false;
     jump = 500.0;
     gravity = 600.0;
     speed = 200.0;
@@ -88,4 +89,8 @@ void Luce::_physics_process(float delta) {
     else {
         // Empty
     }
+}
+
+bool Luce::get_rosary_power() {
+    return rosary_power;
 }

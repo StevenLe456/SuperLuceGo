@@ -1,6 +1,8 @@
 #ifndef DEMON_H
 #define DEMON_H
 
+#include "luce.hpp"
+
 #include <AnimatedSprite.hpp>
 #include <Godot.hpp>
 #include <KinematicBody2D.hpp>
@@ -18,7 +20,7 @@ namespace godot {
             float speed;
             DemonState* state;
             AnimatedSprite* anim;
-            KinematicBody2D* luce;
+            Luce* luce;
 
         public:
             bool chase;
@@ -55,6 +57,13 @@ namespace godot {
         public:
             DemonChase();
             ~DemonChase();
+            DemonState* update(godot::Demon& demon);
+    };
+
+    class DemonEvade : public DemonState {
+        public:
+            DemonEvade();
+            ~DemonEvade();
             DemonState* update(godot::Demon& demon);
     };
 }

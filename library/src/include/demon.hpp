@@ -6,7 +6,6 @@
 #include <AnimatedSprite.hpp>
 #include <Godot.hpp>
 #include <KinematicBody2D.hpp>
-#include <KinematicCollision2D.hpp>
 #include <Vector2.hpp>
 
 namespace godot {
@@ -35,8 +34,7 @@ namespace godot {
             void _init();
             void _ready();
             void _physics_process(float delta);
-            void _body_entered(Variant body);
-            void _body_exited(Variant body);
+            void _on_hitbox_body_entered(Variant v);
             void set_velocity(Vector2 v);
             float get_speed();
     };

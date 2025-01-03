@@ -1,5 +1,8 @@
 #include "demon.hpp"
 
+#include <Area2D.hpp>
+#include <KinematicCollision2D.hpp>
+
 #include <cmath>
 #include <iostream>
 
@@ -28,6 +31,9 @@ DemonStill::~DemonStill() {
 DemonState* DemonStill::update(godot::Demon& demon) {
     demon.set_velocity(godot::Vector2(0, 0));
     demon.animation = "still";
+    if (demon.dying) {
+        return new DemonDie();
+    }
     if (demon.chase) {
         return new DemonChase();
     }
@@ -55,6 +61,9 @@ DemonState* DemonChase::update(Demon& demon) {
         demon.set_velocity(Vector2(demon.get_speed(), 0));
     }
     demon.animation = "move";
+    if (demon.dying) {
+        return new DemonDie();
+    }
     if (!demon.chase && !demon.evade) {
         return new DemonStill();
     }
@@ -82,6 +91,9 @@ DemonState* DemonEvade::update(Demon& demon) {
         demon.set_velocity(Vector2(-demon.get_speed(), 0));
     }
     demon.animation = "move";
+    if (demon.dying) {
+        return new DemonDie();
+    }
     if (!demon.chase && !demon.evade) {
         return new DemonStill();
     }
@@ -100,6 +112,12 @@ DemonDie::~DemonDie() {
 }
 
 DemonState* DemonDie::update(Demon& demon) {
+    if (demon.get_parent()->get_parent()->get_node<KinematicBody2D>("Luce")->get("rosary_power")) {
+        Godot::print("I vanquish demons with the help of the Theotokos!!!");
+    }
+    else {
+        Godot::print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAH");
+    }
     demon.queue_free();
     return NULL;
 }
@@ -108,6 +126,7 @@ void Demon::_register_methods() {
     // Register _process function here
     register_method("_ready", &Demon::_ready);
     register_method("_physics_process", &Demon::_physics_process);
+    register_method("_on_hitbox_body_entered", &Demon::_on_hitbox_body_entered);
 }
 
 Demon::Demon() {
@@ -127,6 +146,8 @@ void Demon::_init() {
 void Demon::_ready() {
     anim = get_node<AnimatedSprite>("AnimatedSprite");
     luce = get_parent()->get_parent()->get_node<Luce>("Luce");
+    Area2D* hitbox = get_node<Area2D>("Area2D");
+    hitbox->connect("body_entered", this, "_on_hitbox_body_entered");
 }
 
 void Demon::_physics_process(float delta) {
@@ -135,14 +156,18 @@ void Demon::_physics_process(float delta) {
     chase = distance <= 500.0 && !luce->get_rosary_power();
     evade = distance <= 500.0 && luce->get_rosary_power();
     DemonState* s = state->update(*this);
-    Ref<KinematicCollision2D> collisions = move_and_collide(velocity * delta);
-    if (!collisions.is_null()) {
-        Godot::print(collisions->get_collider()->get_class());
-    }
+    move_and_slide(velocity);
     anim->play(animation);
     if (s != NULL) {
         delete state;
         state = s;
+    }
+}
+
+void Demon::_on_hitbox_body_entered(Variant v) {
+    Node* n = (Node*) v;
+    if (n->get_name() == "Luce") {
+        dying = true;
     }
 }
 

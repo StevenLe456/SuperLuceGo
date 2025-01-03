@@ -3,9 +3,11 @@
 using namespace godot;
 
 void Luce::_register_methods() {
-    // Register _process function here
+    // Register methods here
     register_method("_ready", &Luce::_ready);
     register_method("_physics_process", &Luce::_physics_process);
+    // Register properties here
+    register_property("rosary_power", &Luce::set_rosary_power, &Luce::get_rosary_power, false);
 }
 
 Luce::Luce() {
@@ -19,7 +21,7 @@ Luce::~Luce() {
 void Luce::_init() {
     velocity = Vector2(0, 0);
     jumped = false;
-    rosary_power = false;
+    rosary_power = true;
     jump = 500.0;
     gravity = 600.0;
     speed = 200.0;
@@ -93,4 +95,8 @@ void Luce::_physics_process(float delta) {
 
 bool Luce::get_rosary_power() {
     return rosary_power;
+}
+
+void Luce::set_rosary_power(bool rp) {
+    rosary_power = rp;
 }

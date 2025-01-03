@@ -30,6 +30,7 @@ namespace godot {
             void _ready();
             void _physics_process(float delta);
             bool get_rosary_power();
+            void set_rosary_power(bool rp);
     };
 }
 

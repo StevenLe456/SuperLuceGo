@@ -100,6 +100,7 @@ DemonDie::~DemonDie() {
 }
 
 DemonState* DemonDie::update(Demon& demon) {
+    demon.queue_free();
     return NULL;
 }
 
@@ -120,6 +121,7 @@ Demon::~Demon() {
 void Demon::_init() {
     speed = 150.0;
     chase = false;
+    evade = false;
 }
 
 void Demon::_ready() {
@@ -133,7 +135,10 @@ void Demon::_physics_process(float delta) {
     chase = distance <= 500.0 && !luce->get_rosary_power();
     evade = distance <= 500.0 && luce->get_rosary_power();
     DemonState* s = state->update(*this);
-    move_and_slide(velocity, Vector2::UP);
+    Ref<KinematicCollision2D> collisions = move_and_collide(velocity * delta);
+    if (!collisions.is_null()) {
+        Godot::print(collisions->get_collider()->get_class());
+    }
     anim->play(animation);
     if (s != NULL) {
         delete state;

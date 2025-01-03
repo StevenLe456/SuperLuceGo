@@ -6,6 +6,7 @@
 #include <AnimatedSprite.hpp>
 #include <Godot.hpp>
 #include <KinematicBody2D.hpp>
+#include <KinematicCollision2D.hpp>
 #include <Vector2.hpp>
 
 namespace godot {
@@ -25,6 +26,7 @@ namespace godot {
         public:
             bool chase;
             bool evade;
+            bool dying;
             godot::String animation;
 
             Demon();

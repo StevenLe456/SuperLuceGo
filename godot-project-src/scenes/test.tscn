@@ -22,10 +22,6 @@ scale = Vector2( 1, 1.4 )
 [node name="Luce" parent="." instance=ExtResource( 2 )]
 position = Vector2( -511, 161 )
 
-[node name="Camera2D" type="Camera2D" parent="Luce"]
-position = Vector2( 260, -160 )
-current = true
-
 [node name="Ground" parent="." instance=ExtResource( 3 )]
 position = Vector2( -7, 270 )
 scale = Vector2( 1.02215, 0.984958 )

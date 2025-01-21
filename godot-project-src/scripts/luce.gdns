@@ -1,8 +1,0 @@
-[gd_resource type="NativeScript" load_steps=2 format=2]
-
-[ext_resource path="res://lib/gamelib.gdnlib" type="GDNativeLibrary" id=1]
-
-[resource]
-resource_name = "Luce"
-class_name = "Luce"
-library = ExtResource( 1 )

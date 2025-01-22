@@ -18,10 +18,16 @@ _global_script_classes=[ {
 "class": "Luce",
 "language": "GDScript",
 "path": "res://scripts/luce.gd"
+}, {
+"base": "Area2D",
+"class": "Theotokos",
+"language": "GDScript",
+"path": "res://scripts/theotokos.gd"
 } ]
 _global_script_class_icons={
 "Demon": "",
-"Luce": ""
+"Luce": "",
+"Theotokos": ""
 }
 
 [application]

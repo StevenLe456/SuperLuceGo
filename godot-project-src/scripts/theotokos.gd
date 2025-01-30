@@ -10,6 +10,7 @@ enum States {ROSARY, STILL}
 # var a = 2
 # var b = "text"
 onready var anim: AnimatedSprite = $AnimatedSprite
+onready var text: Label = $Label
 var has_rosary: bool = true
 var state = States.ROSARY
 
@@ -24,6 +25,7 @@ func _process(delta):
 	if state == States.ROSARY:
 		anim.play("rosary")
 	elif state == States.STILL:
+		text.visible = true
 		anim.play("still")
 	else:
 		pass
@@ -35,5 +37,6 @@ func _process(delta):
 func _on_Theotokos_body_entered(body):
 	if body.name == "Luce":
 		var chara := body as Luce
-		chara.rosary_power = true
+		chara.power_ready = true
 		has_rosary = false
+		chara.rosary_bar.percent_visible = 100

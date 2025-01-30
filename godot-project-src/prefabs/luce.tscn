@@ -1,10 +1,23 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://prefabs/luce_sprite_anim.tres" type="SpriteFrames" id=1]
 [ext_resource path="res://scripts/luce.gd" type="Script" id=2]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 18.5, 46 )
+
+[sub_resource type="ParticlesMaterial" id=2]
+emission_shape = 1
+emission_sphere_radius = 1.0
+flag_disable_z = true
+spread = 180.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 432.1
+initial_velocity_random = 0.19
+angular_velocity = 720.0
+orbit_velocity = 61.73
+orbit_velocity_random = 0.0
+color = Color( 0.372549, 0.0313726, 0.964706, 1 )
 
 [node name="Luce" type="KinematicBody2D"]
 z_index = 3
@@ -23,3 +36,17 @@ shape = SubResource( 1 )
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2( 287, -160 )
 current = true
+
+[node name="PowerUpTimer" type="Timer" parent="."]
+wait_time = 0.5
+
+[node name="RosaryTimer" type="Timer" parent="."]
+wait_time = 10.0
+
+[node name="Particles2D" type="Particles2D" parent="."]
+visible = false
+amount = 500
+process_material = SubResource( 2 )
+
+[connection signal="timeout" from="PowerUpTimer" to="." method="_on_PowerUpTimer_timeout"]
+[connection signal="timeout" from="RosaryTimer" to="." method="_on_RosaryTimer_timeout"]

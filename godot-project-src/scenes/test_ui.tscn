@@ -1,0 +1,37 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://prefabs/font.tres" type="DynamicFont" id=1]
+
+[node name="Test_UI" type="CanvasLayer"]
+
+[node name="Health" type="Label" parent="."]
+margin_left = 694.0
+margin_top = 39.0
+margin_right = 829.0
+margin_bottom = 53.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = ExtResource( 1 )
+text = "Health: 10"
+
+[node name="KillStreak" type="Label" parent="."]
+margin_left = 694.0
+margin_top = 95.0
+margin_right = 804.0
+margin_bottom = 109.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_fonts/font = ExtResource( 1 )
+text = "Demons Killed: 0"
+
+[node name="Power" type="ProgressBar" parent="."]
+margin_left = 692.0
+margin_top = 154.0
+margin_right = 976.0
+margin_bottom = 190.0
+
+[node name="Label" type="Label" parent="Power"]
+margin_left = 80.0
+margin_top = 42.0
+margin_right = 193.0
+margin_bottom = 56.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Rosary Power-Up"

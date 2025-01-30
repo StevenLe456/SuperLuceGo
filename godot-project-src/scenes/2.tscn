@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://prefabs/ground.tscn" type="PackedScene" id=1]
+
+[node name="2" type="Node2D"]
+
+[node name="Enemy" type="Node2D" parent="."]
+
+[node name="Node2D" type="Node2D" parent="Enemy"]
+position = Vector2( 900, 444 )
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="Ground" parent="World" instance=ExtResource( 1 )]
+position = Vector2( 512, 536 )

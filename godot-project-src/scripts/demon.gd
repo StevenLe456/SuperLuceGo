@@ -14,11 +14,14 @@ export var gravity: float = 600.0
 export var speed: float = 150.0
 export var danger_zone: float = 500.0
 onready var anim: AnimatedSprite = $AnimatedSprite
-onready var luce: Luce = get_parent().get_parent().get_node('Luce')
+onready var luce: Luce = get_parent().get_parent().get_node("Luce")
 onready var timer: Timer = $Timer
 onready var coll1: CollisionShape2D = $CollisionShape2D
 onready var hitbox: Area2D = $Area2D
 onready var coll2: CollisionShape2D = $Area2D/CollisionShape2D
+onready var health_text: Label = get_parent().get_parent().get_node("Test_UI/Health")
+onready var kill_text: Label = get_parent().get_parent().get_node("Test_UI/KillStreak")
+onready var particles: Particles2D = $Particles2D
 var velocity: Vector2 = Vector2(0, 0)
 var state = States.STILL
 var dying: bool = false
@@ -86,6 +89,12 @@ func _process(delta):
 func _on_Area2D_body_entered(body):
 	if body.name == "Luce":
 		dying = true
+		if luce.rosary_power:
+			luce.kill += 1
+			kill_text.text = "Demons Killed: " + str(luce.kill)
+		else:
+			luce.health -= 1
+			health_text.text = "Health: " + str(luce.health)
 
 
 func _on_Timer_timeout():

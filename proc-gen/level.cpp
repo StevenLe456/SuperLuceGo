@@ -9,6 +9,12 @@
 // Function headers
 std::vector<int> create_level(std::map<std::string, std::vector<int>>);
 int get_index(int, int, int);
+std::vector<int> verify_level(int, std::vector<int>, std::vector<int>, std::map<std::string, std::vector<int>>, bool flag);
+
+// Test this shit out
+int main() {
+    
+}
 
 // Function to procedurally generate level
 std::vector<int> create_level(std::map<std::string, std::vector<int>> rooms) {
@@ -63,11 +69,17 @@ std::vector<int> create_level(std::map<std::string, std::vector<int>> rooms) {
         important_locs.push_back(get_index(height, 0, width - 1));
     }
 
-    // Fill in the beginning of a row with a moving platform and populate the room right above with an open space
+    // Fill in the beginning or end of a row with a moving platform and populate the room right above with an open space
     int temp = -1;
     for (int i = 0; i < height; i++) {
         std::vector slice = std::vector<int>(level.begin() + get_index(height, i, 0), level.begin() + get_index(height, i, width - 1));
-        int idx = std::find(slice.begin(), slice.end(), -1) - slice.begin();
+        int idx = -1;
+        if (i % 2 == 0) {
+            idx = std::find(slice.begin(), slice.end(), -1) - slice.begin();
+        }
+        else {
+            idx = std::find(slice.rbegin(), slice.rend(), -1) - slice.rend();
+        }
         if (idx == width) {
             idx = 0;
         }
@@ -121,26 +133,80 @@ std::vector<int> create_level(std::map<std::string, std::vector<int>> rooms) {
         }
     }
 
-    // Create graph to store path information
-    CXXGraph::Graph<int> g;
-
-    // Populate graph with path information
-    for (int i = 2; i < level.size(); i++) {
-        int up = i + width;
-        int right = i + 1;
-        if (up >= 2 && up < level.size() && level.at(i) == rooms.at("moving-platform").at(0) && level.at(up) == rooms.at("open-space").at(0)) {
-            CXXGraph::Node<int> node1(std::to_string(i), i);
-            CXXGraph::Node<int> node2(std::to_string(up), up);
-            std::pair<const CXXGraph::Node<int> *, const CXXGraph::Node<int> *> pairNode(&node1, &node2);
-            CXXGraph::UndirectedEdge<int> edge(1, pairNode);
-            g.addEdge(&edge);
+    // Verify level; if invalid level, dilate room spaces until valid 
+    int dilate = 1;
+    bool failure = false; // Debugging bullshit
+    std::vector<int> missing = verify_level(width, level, important_locs, rooms, true);
+    while (missing.size() > 0) {
+        for (int i : missing) {
+            int left = i - dilate;
+            int right = i + dilate;
+            if (left >= 2 && left < level.size()) {
+                if ((left / height) <= (height / 3)) {
+                    level.at(left) = rooms.at("easy").at((rand() % rooms.at("easy").size()));
+                }
+                else if ((left / height) >= (2 * height / 3)) {
+                    float p = static_cast<float> (rand()) / static_cast<float> (RAND_MAX);
+                    if (p <= 0.2) {
+                        level.at(left) = rooms.at("easy").at((rand() % rooms.at("easy").size()));
+                    }
+                    else if (p >= 0.5) {
+                        level.at(left) = rooms.at("hard").at((rand() % rooms.at("hard").size()));
+                    }
+                    else {
+                        level.at(left) = rooms.at("medium").at((rand() % rooms.at("medium").size()));
+                    }
+                }
+                else {
+                    float p = static_cast<float> (rand()) / static_cast<float> (RAND_MAX);
+                    if (p <= 0.3) {
+                        level.at(left) = rooms.at("easy").at((rand() % rooms.at("easy").size()));
+                    }
+                    else {
+                        level.at(left) = rooms.at("medium").at((rand() % rooms.at("medium").size()));
+                    }
+                }
+            }
+            if (right >= 2 && right < level.size()) {
+                if ((right / height) <= (height / 3)) {
+                    level.at(right) = rooms.at("easy").at((rand() % rooms.at("easy").size()));
+                }
+                else if ((right / height) >= (2 * height / 3)) {
+                    float p = static_cast<float> (rand()) / static_cast<float> (RAND_MAX);
+                    if (p <= 0.2) {
+                        level.at(right) = rooms.at("easy").at((rand() % rooms.at("easy").size()));
+                    }
+                    else if (p >= 0.5) {
+                        level.at(right) = rooms.at("hard").at((rand() % rooms.at("hard").size()));
+                    }
+                    else {
+                        level.at(right) = rooms.at("medium").at((rand() % rooms.at("medium").size()));
+                    }
+                }
+                else {
+                    float p = static_cast<float> (rand()) / static_cast<float> (RAND_MAX);
+                    if (p <= 0.3) {
+                        level.at(right) = rooms.at("easy").at((rand() % rooms.at("easy").size()));
+                    }
+                    else {
+                        level.at(right) = rooms.at("medium").at((rand() % rooms.at("medium").size()));
+                    }
+                }
+            }
         }
-        if (right >= 2 && right < level.size() && level.at(i) != 0 && level.at(right) != 0) {
-            CXXGraph::Node<int> node1(std::to_string(i), i);
-            CXXGraph::Node<int> node2(std::to_string(right), right);
-            std::pair<const CXXGraph::Node<int> *, const CXXGraph::Node<int> *> pairNode(&node1, &node2);
-            CXXGraph::UndirectedEdge<int> edge(1, pairNode);
-            g.addEdge(&edge);
+        dilate++;
+        if (dilate == width) {
+            failure = true;
+            break;
+        }
+        missing = verify_level(width, level, important_locs, rooms, true);
+    }
+
+    // Get rid of disconnected rooms
+    std::vector<int> connected = verify_level(width, level, important_locs, rooms, false);
+    for (int i = 7; i < level.size(); i++) {
+        if (std::find(connected.begin(), connected.end(), i) - connected.begin() == level.size()) {
+            level.at(i) = 0;
         }
     }
 
@@ -150,4 +216,52 @@ std::vector<int> create_level(std::map<std::string, std::vector<int>> rooms) {
 // Function to calculate index of level vector based on grid coordinates
 int get_index(int height, int row, int column) {
     return 2 + row * height + column;
+}
+
+// Function to verify level using graph algorithms
+std::vector<int> verify_level(int width, std::vector<int> level, std::vector<int> important_locs, std::map<std::string, std::vector<int>> rooms, bool flag) {
+    // Create graph to store path information
+    std::vector<CXXGraph::Node<int>> nodes;
+    CXXGraph::T_EdgeSet<int> edgeSet;
+
+    // Create nodes
+    for (int i = 2; i < level.size(); i++) {
+        nodes.push_back(CXXGraph::Node<int>(std::to_string(i), i));
+    }
+
+    // Populate graph with path information
+    int cnt = 1;
+    for (int i = 2; i < level.size(); i++) {
+        int up = i + width;
+        int right = i + 1;
+        if (up >= 2 && up < level.size() && level.at(i) == rooms.at("moving-platform").at(0) && level.at(up) == rooms.at("open-space").at(0)) {
+            CXXGraph::UndirectedEdge<int> edge(cnt++, nodes.at(i), nodes.at(up));
+            edgeSet.insert(std::make_shared<CXXGraph::Edge<int>>(edge));
+        }
+        if (right >= 2 && right < level.size() && level.at(i) != 0 && level.at(right) != 0) {
+            CXXGraph::UndirectedEdge<int> edge(cnt++, nodes.at(i), nodes.at(right));
+            edgeSet.insert(std::make_shared<CXXGraph::Edge<int>>(edge));
+        }
+    }
+    CXXGraph::Graph<int> g(edgeSet);
+
+    // Use graph slicing algorithm to check if all important places are connected to beginning room
+    std::vector<CXXGraph::Node<int>> n = g.graph_slicing(nodes.at(1));
+    std::vector<int> n_int;
+    for (CXXGraph::Node nod : n) {
+        n_int.push_back(nod.getId());
+    }
+    std::vector<int> missing;
+    for (int i : important_locs) {
+        if (std::find(n_int.begin(), n_int.end(), i) - n_int.begin() == n_int.size()) {
+            missing.push_back(i);
+        }
+    }
+
+    if (flag) {
+        return missing;
+    }
+    else {
+        return n_int;
+    }
 }

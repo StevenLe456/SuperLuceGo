@@ -13,7 +13,29 @@ std::vector<int> verify_level(int, std::vector<int>, std::vector<int>, std::map<
 
 // Test this shit out
 int main() {
-    
+    std::map<std::string, std::vector<int>> rooms;
+    rooms.insert({"jesus", std::vector<int>{1}});
+    rooms.insert({"luce-start", std::vector<int>{2}});
+    rooms.insert({"demon-intro", std::vector<int>{3}});
+    rooms.insert({"mary-intercession", std::vector<int>{4}});
+    rooms.insert({"demon-task", std::vector<int>{5, 6, 7, 8, 9}});
+    rooms.insert({"moving-platform", std::vector<int>{10}});
+    rooms.insert({"open-space", std::vector<int>{11}});
+    rooms.insert({"easy", std::vector<int>{12, 13, 14}});
+    rooms.insert({"medium", std::vector<int>{15, 16, 17, 18}});
+    rooms.insert({"hard", std::vector<int>{19, 20, 21}});
+    rooms.insert({"end", std::vector<int>{22}});
+
+    std::vector<int> level = create_level(rooms);
+
+    for (int i = 2; i < level.size(); i++) {
+        if ((i - 2) % level.at(1)) {
+            std::cout << "\n" + std::to_string(level.at(i));
+        }
+        else {
+            std::cout << std::to_string(level.at(i));
+        }
+    }
 }
 
 // Function to procedurally generate level
@@ -48,37 +70,37 @@ std::vector<int> create_level(std::map<std::string, std::vector<int>> rooms) {
     std::vector<int> important_locs;
 
     // Automatically fill in the first five rooms with predefined level stuff
-    level.at(get_index(height, height - 1, 0)) = rooms.at("jesus").at(0);
-    important_locs.push_back(get_index(height, height - 1, 0));
-    level.at(get_index(height, height - 1, 1)) = rooms.at("luce-start").at(0);
-    important_locs.push_back(get_index(height, height - 1, 1));
-    level.at(get_index(height, height - 1, 2)) = rooms.at("demon-intro").at(0);
-    important_locs.push_back(get_index(height, height - 1, 2));
-    level.at(get_index(height, height - 1, 3)) = rooms.at("mary-intercession").at(0);
-    important_locs.push_back(get_index(height, height - 1, 3));
-    level.at(get_index(height, height - 1, 4)) = rooms.at("demon-task").at(0);
-    important_locs.push_back(get_index(height, height - 1, 4));
+    level.at(get_index(width, height - 1, 0)) = rooms.at("jesus").at(0);
+    important_locs.push_back(get_index(width, height - 1, 0));
+    level.at(get_index(width, height - 1, 1)) = rooms.at("luce-start").at(0);
+    important_locs.push_back(get_index(width, height - 1, 1));
+    level.at(get_index(width, height - 1, 2)) = rooms.at("demon-intro").at(0);
+    important_locs.push_back(get_index(width, height - 1, 2));
+    level.at(get_index(width, height - 1, 3)) = rooms.at("mary-intercession").at(0);
+    important_locs.push_back(get_index(width, height - 1, 3));
+    level.at(get_index(width, height - 1, 4)) = rooms.at("demon-task").at(0);
+    important_locs.push_back(get_index(width, height - 1, 4));
 
     // Put the ending room at the optimal spot based on the height
     if (height % 2 == 0) {
-        level.at(get_index(height, 0, 0)) = rooms.at("end").at(0);
-        important_locs.push_back(get_index(height, 0, 0));
+        level.at(get_index(width, 0, 0)) = rooms.at("end").at(0);
+        important_locs.push_back(get_index(width, 0, 0));
     }
     else {
-        level.at(get_index(height, 0, width - 1)) = rooms.at("end").at(0);
-        important_locs.push_back(get_index(height, 0, width - 1));
+        level.at(get_index(width, 0, width - 1)) = rooms.at("end").at(0);
+        important_locs.push_back(get_index(width, 0, width - 1));
     }
 
     // Fill in the beginning or end of a row with a moving platform and populate the room right above with an open space
     int temp = -1;
-    for (int i = 0; i < height; i++) {
-        std::vector slice = std::vector<int>(level.begin() + get_index(height, i, 0), level.begin() + get_index(height, i, width - 1));
+    for (int i = height - 1; i >= 0 ; i--) {
+        std::vector slice = std::vector<int>(level.begin() + get_index(width, i, 0), level.begin() + get_index(width, i, width - 1));
         int idx = -1;
         if (i % 2 == 0) {
             idx = std::find(slice.begin(), slice.end(), -1) - slice.begin();
         }
         else {
-            idx = std::find(slice.rbegin(), slice.rend(), -1) - slice.rend();
+            idx = slice.rend() - std::find(slice.rbegin(), slice.rend(), -1);
         }
         if (idx == width) {
             idx = 0;
@@ -87,9 +109,10 @@ std::vector<int> create_level(std::map<std::string, std::vector<int>> rooms) {
             idx++;
         }
         temp = idx;
-        level.at(get_index(height, i, idx)) = rooms.at("moving-platform").at(0);
+        std::cout << idx << std::endl;
+        level.at(get_index(width, i, idx)) = rooms.at("moving-platform").at(0);
         if (i > 0) {
-            level.at(get_index(height, i - 1, idx)) = rooms.at("open-space").at(0);
+            level.at(get_index(width, i - 1, idx)) = rooms.at("open-space").at(0);
         }
     }
 
@@ -214,8 +237,8 @@ std::vector<int> create_level(std::map<std::string, std::vector<int>> rooms) {
 }
 
 // Function to calculate index of level vector based on grid coordinates
-int get_index(int height, int row, int column) {
-    return 2 + row * height + column;
+int get_index(int width, int row, int column) {
+    return 2 + row * width + column;
 }
 
 // Function to verify level using graph algorithms

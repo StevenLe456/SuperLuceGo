@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <map>
+#include <tuple>
 #include <stdlib.h>
 #include <time.h>
 #include <vector>
@@ -9,6 +10,8 @@
 // Function headers
 std::vector<int> create_level(std::map<std::string, std::vector<int>>);
 int get_index(int, int, int);
+//std::tuple<CXXGraph::Graph<int>, std::vector<CXXGraph::Node<int>>, std::vector<std::vector<int>>> create_graph(std::vector<int>, int, std::map<std::string, std::vector<int>>);
+std::vector<std::vector<int>> create_adj(std::vector<int>, int, std::map<std::string, std::vector<int>>);
 std::vector<int> verify_level(int, std::vector<int>, std::vector<int>, std::map<std::string, std::vector<int>>, bool flag);
 
 // Test this shit out
@@ -29,13 +32,25 @@ int main() {
     std::vector<int> level = create_level(rooms);
 
     for (int i = 2; i < level.size(); i++) {
-        if ((i - 2) % level.at(1)) {
-            std::cout << "\n" + std::to_string(level.at(i));
+        if ((i - 2) % level.at(1) == level.at(1) - 1) {
+            if (level.at(i) / 10 == 0) {
+                std::cout << "0" << level.at(i) << " \n"; 
+            }
+            else {
+                std::cout << level.at(i) << " \n";
+            }
         }
         else {
-            std::cout << std::to_string(level.at(i));
+            if (level.at(i) / 10 == 0) {
+                std::cout << "0" << level.at(i) << " "; 
+            }
+            else {
+                std::cout << level.at(i) << " ";
+            }
         }
     }
+    std::cout << std::endl;
+    return 0;
 }
 
 // Function to procedurally generate level
@@ -56,7 +71,7 @@ std::vector<int> create_level(std::map<std::string, std::vector<int>> rooms) {
     level.insert(level.begin(), height);
 
     // Randomly choose a float value for the probabililty of room-filling in the level
-    float prob = 0.4 + static_cast<float> (rand()) / (static_cast<float> (RAND_MAX / 0.3));
+    float prob = 0.25 + static_cast<float> (rand()) / (static_cast<float> (RAND_MAX / 0.25));
 
     // Fill level with basic room information based on probability
     for (int i = 2; i < level.size(); i++) {
@@ -94,24 +109,30 @@ std::vector<int> create_level(std::map<std::string, std::vector<int>> rooms) {
     // Fill in the beginning or end of a row with a moving platform and populate the room right above with an open space
     int temp = -1;
     for (int i = height - 1; i >= 0 ; i--) {
-        std::vector slice = std::vector<int>(level.begin() + get_index(width, i, 0), level.begin() + get_index(width, i, width - 1));
+        // std::vector slice = std::vector<int>(level.begin() + get_index(width, i, 0), level.begin() + get_index(width, i, width - 1));
+        // int idx = -1;
+        // if (i % 2 == 0) {
+        //     idx = std::find(slice.begin(), slice.end(), -1) - slice.begin();
+        // }
+        // else {
+        //     idx = slice.rend() - std::find(slice.rbegin(), slice.rend(), -1);
+        // }
         int idx = -1;
-        if (i % 2 == 0) {
-            idx = std::find(slice.begin(), slice.end(), -1) - slice.begin();
+        if (i == height - 1) {
+            idx = rand() % (width - 5) + 5;
+        }
+        else if (i == 0) {
+            idx = rand() % (width - 1) + 1;
         }
         else {
-            idx = slice.rend() - std::find(slice.rbegin(), slice.rend(), -1);
+            idx = rand() % width;
         }
-        if (idx == width) {
-            idx = 0;
-        }
-        if (idx == temp) {
-            idx++;
+        while (idx == temp) {
+            idx = rand() % width;
         }
         temp = idx;
-        std::cout << idx << std::endl;
-        level.at(get_index(width, i, idx)) = rooms.at("moving-platform").at(0);
         if (i > 0) {
+            level.at(get_index(width, i, idx)) = rooms.at("moving-platform").at(0);
             level.at(get_index(width, i - 1, idx)) = rooms.at("open-space").at(0);
         }
     }
@@ -119,20 +140,21 @@ std::vector<int> create_level(std::map<std::string, std::vector<int>> rooms) {
     // Randomly choose places for the demon task rooms
     int dummy = 4;
     while (dummy != 0) {
-        int d = (rand() % (level.size() - 7)) + 8;
+        int d = rand() % (level.size());
         if (level.at(d) == 0 || level.at(d) == -1) {
             level.at(d) = rooms.at("demon-task").at(dummy);
             important_locs.push_back(d);
+            dummy--;
         } 
     }
 
     // Fill in the rest of the space with varying rooms
-    for (int i = 7; i < level.size(); i++) {
+    for (int i = 0; i < level.size(); i++) {
         if (level.at(i) == -1) {
-            if ((i / height) <= (height / 3)) {
+            if ((i / height) >= (2 * height / 3)) {
                 level.at(i) = rooms.at("easy").at((rand() % rooms.at("easy").size()));
             }
-            else if ((i / height) >= (2 * height / 3)) {
+            else if ((i / height) <= (height / 3)) {
                 float p = static_cast<float> (rand()) / static_cast<float> (RAND_MAX);
                 if (p <= 0.2) {
                     level.at(i) = rooms.at("easy").at((rand() % rooms.at("easy").size()));
@@ -164,11 +186,11 @@ std::vector<int> create_level(std::map<std::string, std::vector<int>> rooms) {
         for (int i : missing) {
             int left = i - dilate;
             int right = i + dilate;
-            if (left >= 2 && left < level.size()) {
-                if ((left / height) <= (height / 3)) {
+            if (left >= 2 && left < level.size() && level.at(left) == 0) {
+                if ((left / height) >= (2 * height / 3)) {
                     level.at(left) = rooms.at("easy").at((rand() % rooms.at("easy").size()));
                 }
-                else if ((left / height) >= (2 * height / 3)) {
+                else if ((left / height) <= (height / 3)) {
                     float p = static_cast<float> (rand()) / static_cast<float> (RAND_MAX);
                     if (p <= 0.2) {
                         level.at(left) = rooms.at("easy").at((rand() % rooms.at("easy").size()));
@@ -190,11 +212,11 @@ std::vector<int> create_level(std::map<std::string, std::vector<int>> rooms) {
                     }
                 }
             }
-            if (right >= 2 && right < level.size()) {
-                if ((right / height) <= (height / 3)) {
+            if (right >= 2 && right < level.size() && level.at(right) == 0) {
+                if ((right / height) >= (2 * height / 3)) {
                     level.at(right) = rooms.at("easy").at((rand() % rooms.at("easy").size()));
                 }
-                else if ((right / height) >= (2 * height / 3)) {
+                else if ((right / height) <= (height / 3)) {
                     float p = static_cast<float> (rand()) / static_cast<float> (RAND_MAX);
                     if (p <= 0.2) {
                         level.at(right) = rooms.at("easy").at((rand() % rooms.at("easy").size()));
@@ -222,16 +244,16 @@ std::vector<int> create_level(std::map<std::string, std::vector<int>> rooms) {
             failure = true;
             break;
         }
+        if (failure) {
+            std::cout << "Hiiiiiiiiiyah" << std::endl;
+        }
         missing = verify_level(width, level, important_locs, rooms, true);
     }
 
-    // Get rid of disconnected rooms
-    std::vector<int> connected = verify_level(width, level, important_locs, rooms, false);
-    for (int i = 7; i < level.size(); i++) {
-        if (std::find(connected.begin(), connected.end(), i) - connected.begin() == level.size()) {
-            level.at(i) = 0;
-        }
-    }
+    // Prune level to add more empty space
+    std::tuple<CXXGraph::Graph<int>, std::vector<CXXGraph::Node<int>>, std::vector<std::vector<int>>> t = create_graph(level, width, rooms);
+    std::vector<std::vector<int>> adj = std::get<2>(t);
+
 
     return level;
 }
@@ -241,35 +263,29 @@ int get_index(int width, int row, int column) {
     return 2 + row * width + column;
 }
 
-// Function to verify level using graph algorithms
-std::vector<int> verify_level(int width, std::vector<int> level, std::vector<int> important_locs, std::map<std::string, std::vector<int>> rooms, bool flag) {
-    // Create graph to store path information
-    std::vector<CXXGraph::Node<int>> nodes;
-    CXXGraph::T_EdgeSet<int> edgeSet;
-
-    // Create nodes
-    for (int i = 2; i < level.size(); i++) {
-        nodes.push_back(CXXGraph::Node<int>(std::to_string(i), i));
-    }
-
-    // Populate graph with path information
-    int cnt = 1;
+//Function to create adjacency list
+std::vector<std::vector<int>> create_adj(std::vector<int> level, int width, std::map<std::string, std::vector<int>> rooms) {
+    std::vector<std::vector<int>> adj(level.size(), std::vector<int>());
     for (int i = 2; i < level.size(); i++) {
         int up = i + width;
         int right = i + 1;
+        //std::cout << i << " " << up << " " << right << std::endl;
         if (up >= 2 && up < level.size() && level.at(i) == rooms.at("moving-platform").at(0) && level.at(up) == rooms.at("open-space").at(0)) {
-            CXXGraph::UndirectedEdge<int> edge(cnt++, nodes.at(i), nodes.at(up));
-            edgeSet.insert(std::make_shared<CXXGraph::Edge<int>>(edge));
+            adj.at(i).push_back(up);
         }
         if (right >= 2 && right < level.size() && level.at(i) != 0 && level.at(right) != 0) {
-            CXXGraph::UndirectedEdge<int> edge(cnt++, nodes.at(i), nodes.at(right));
-            edgeSet.insert(std::make_shared<CXXGraph::Edge<int>>(edge));
+            adj.at(i).push_back(right);
         }
     }
-    CXXGraph::Graph<int> g(edgeSet);
+    return adj;
+}
+
+// Function to verify level using graph algorithms
+std::vector<int> verify_level(int width, std::vector<int> level, std::vector<int> important_locs, std::map<std::string, std::vector<int>> rooms, bool flag) {
+    std::tuple<CXXGraph::Graph<int>, std::vector<CXXGraph::Node<int>>, std::vector<std::vector<int>>> t = create_graph(level, width, rooms);
 
     // Use graph slicing algorithm to check if all important places are connected to beginning room
-    std::vector<CXXGraph::Node<int>> n = g.graph_slicing(nodes.at(1));
+    std::vector<CXXGraph::Node<int>> n = std::get<0>(t).graph_slicing(std::get<1>(t).at(1));
     std::vector<int> n_int;
     for (CXXGraph::Node nod : n) {
         n_int.push_back(nod.getId());

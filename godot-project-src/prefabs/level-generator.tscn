@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://scripts/level-generator.gd" type="Script" id=1]
+[ext_resource path="res://scenes/dummy.tscn" type="PackedScene" id=2]
+
+[node name="LevelGenerator" type="Node2D"]
+script = ExtResource( 1 )
+jesus_room = [ ExtResource( 2 ) ]
+luce_start_room = [ ExtResource( 2 ) ]
+demon_intro_room = [ ExtResource( 2 ) ]
+mary_intercession_room = [ ExtResource( 2 ) ]
+demon_task_room = [ ExtResource( 2 ), ExtResource( 2 ), ExtResource( 2 ), ExtResource( 2 ), ExtResource( 2 ) ]
+moving_platform_room = [ ExtResource( 2 ) ]
+open_space_room = [ ExtResource( 2 ) ]
+easy_room = [ ExtResource( 2 ), ExtResource( 2 ), ExtResource( 2 ) ]
+medium_room = [ ExtResource( 2 ), ExtResource( 2 ), ExtResource( 2 ), ExtResource( 2 ) ]
+hard_room = [ ExtResource( 2 ), ExtResource( 2 ), ExtResource( 2 ) ]
+end_room = [ ExtResource( 2 ) ]
+blank_room = [ ExtResource( 2 ) ]
